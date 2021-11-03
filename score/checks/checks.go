@@ -142,12 +142,12 @@ func (c Checks) isEnabled(check ks.Check) bool {
 }
 
 func (c *Checks) RegisterMetaCheck(name, comment string, fn MetaCheckFn) {
-	ch := NewCheck(name, "all", comment, false)
+	ch := NewCheck(name, "All", comment, false)
 	c.registerMetaCheck(MetaCheck{ch, fn})
 }
 
 func (c *Checks) RegisterOptionalMetaCheck(name, comment string, fn MetaCheckFn) {
-	ch := NewCheck(name, "all", comment, true)
+	ch := NewCheck(name, "All", comment, true)
 	c.registerMetaCheck(MetaCheck{ch, fn})
 }
 
