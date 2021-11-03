@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -102,6 +103,7 @@ func scoreFiles(binName string, args []string) error {
 	verboseOutput := fs.CountP("verbose", "v", "Enable verbose output, can be set multiple times for increased verbosity.")
 	printHelp := fs.Bool("help", false, "Print help")
 	outputFormat := fs.StringP("output-format", "o", "human", "Set to 'human', 'json' or 'ci'. If set to ci, kube-score will output the program in a format that is easier to parse by other programs.")
+	outputFile := fs.StringP("output-file", "f", "", "Set to 'json' or 'txt'. By default, no output file is generated")
 	outputVersion := fs.String("output-version", "", "Changes the version of the --output-format. The 'json' format has version 'v2' (default) and 'v1' (deprecated, will be removed in v1.7.0). The 'human' and 'ci' formats has only version 'v1' (default). If not explicitly set, the default version for that particular output format will be used.")
 	optionalTests := fs.StringSlice("enable-optional-test", []string{}, "Enable an optional test, can be set multiple times")
 	ignoreTests := fs.StringSlice("ignore-test", []string{}, "Disable a test, can be set multiple times")
@@ -219,6 +221,13 @@ Use "-" as filename to read from STDIN.`, execName(binName))
 
 	output, _ := ioutil.ReadAll(r)
 	fmt.Print(string(output))
+	if *outputFile != "" {
+		fileName := fmt.Sprintf("output.%s", *outputFile)
+		err = ioutil.WriteFile(fileName, output, 0644)
+		if err != nil {
+			log.Fatalf("An error occurred while writing to file %s. Error: %v", fileName, err)
+		}
+	}
 	os.Exit(exitCode)
 	return nil
 }
